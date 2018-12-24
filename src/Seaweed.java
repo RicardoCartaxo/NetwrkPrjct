@@ -4,7 +4,7 @@ import java.util.Scanner;
 public class Seaweed extends AquariumItem {
 
     public final int MIN_WIDTH = 30;
-    public final int MAX_WIDTH = 100;
+    public final int MAX_WIDTH = 50;
 
     public Seaweed(int width){
         super(width);

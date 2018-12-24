@@ -1,5 +1,5 @@
 import java.awt.*;
-
+// NEVER USED
 public class RandomNumber {
 
     public RandomNumber(){

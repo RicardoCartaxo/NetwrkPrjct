@@ -1,13 +1,9 @@
 import java.awt.*;
-import java.util.ArrayList;
 import java.util.Collection;
-import java.util.concurrent.ThreadLocalRandom;
 
 public class  SeaweedFactory extends AquariumItemFactory{
 
-    protected RandomNumber rn = new RandomNumber();
-
-    private Seaweed sw = new Seaweed(50);
+    private Seaweed sw = new Seaweed(1);
     int maxWidth = sw.MAX_WIDTH;
     int minWidth = sw.MIN_WIDTH;
     int numberOfSeaweed;
@@ -19,7 +15,7 @@ public class  SeaweedFactory extends AquariumItemFactory{
 
     @Override
     public AquariumItem newItem() {
-        return sink(this.aq_it, new Seaweed((int) (Math.random() * 100)));
+        return sink(this.aq_it, new Seaweed((int)(Math.random() * ((maxWidth - minWidth) + 1)) + minWidth));
     }
 
     public Collection<AquariumItem> getItemCollection() {
@@ -34,11 +30,18 @@ public class  SeaweedFactory extends AquariumItemFactory{
         return instance;
     }
 
-
     @Override
     public void run() {
         for (int i = 0; i < numberOfSeaweed; i++) {
-            this.aq_it.add(this.newItem());
+            try {
+                this.semafero.acquire();
+                this.aq_it.add(this.newItem());
+            }catch(Exception e){
+                e.printStackTrace();
+            }finally{
+                this.semafero.release();
+            }
         }
+
     }
 }

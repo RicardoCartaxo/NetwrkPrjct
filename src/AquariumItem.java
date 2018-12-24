@@ -12,7 +12,7 @@ public abstract class AquariumItem {
     public AquariumItem(int width){
         this.width = width;
         this.height = (width/2);
-        this.position = new Point(ThreadLocalRandom.current().nextInt(0, 250),ThreadLocalRandom.current().nextInt(0, 250));
+        this.position = new Point(ThreadLocalRandom.current().nextInt(0, 350),ThreadLocalRandom.current().nextInt(0, 350));
 
     }
 

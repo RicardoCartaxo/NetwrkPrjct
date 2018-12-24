@@ -1,13 +1,12 @@
 import javax.swing.*;
-import javax.swing.text.Position;
 import java.awt.*;
 import java.util.*;
-import java.util.concurrent.ThreadLocalRandom;
 
 public class Aquarium extends JPanel {
 
-    final int NB_STONES = 13;
-    final int NB_SEAWEED = 15;
+    // Going over around 25 sometimes causes a StackOverflowException (due to there not being any more space on the canvas)
+    final int NB_STONES = 14;
+    final int NB_SEAWEED = 12;
 
     private StoneFactory stF;
     private SeaweedFactory swF;
@@ -30,8 +29,8 @@ public class Aquarium extends JPanel {
     }
     public void fill(){
         stF = new StoneFactory(NB_STONES);
-        stF.run();
         swF = new SeaweedFactory(NB_SEAWEED);
+        items.addAll(stF.getItemCollection());
     }
 
 }
