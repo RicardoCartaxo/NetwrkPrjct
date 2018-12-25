@@ -1,30 +1,17 @@
-import javax.imageio.ImageIO;
-import javax.swing.*;
 import java.awt.*;
-import java.lang.reflect.Array;
-import java.net.URL;
 import java.util.Random;
 import java.util.ArrayList;
 import java.util.Collection;
 
-public class MobileItem extends AquariumItem implements Mobile {
+public abstract class MobileItem extends AquariumItem implements Mobile {
 
     private float speed;
     private static RandomNumber rn = new RandomNumber();
 
-    ImageIcon icon = new ImageIcon("bmw.png");
-    Image image = icon.getImage();
 
     public MobileItem(int width) {
         super(width);
         speed = Math.round((1 / width) * 10);
-    }
-
-    @Override
-    public void draw(Graphics G) {
-        G.setColor(Color.MAGENTA);
-        G.drawOval(position.x,position.y,width,height);
-        G.drawImage(image,position.x,position.y,null);
     }
 
     @Override

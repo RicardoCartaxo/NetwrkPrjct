@@ -7,9 +7,11 @@ public class Aquarium extends JPanel {
     // Going over around 25 sometimes causes a StackOverflowException (due to there not being any more space on the canvas)
     final int NB_STONES = 8;
     final int NB_SEAWEED = 6;
+    final int NB_FISH = 5;
 
     private StoneFactory stF;
     private SeaweedFactory swF;
+    private FishFactory fshF;
 
     protected Collection<AquariumItem> items = new ArrayList<>();
 
@@ -24,8 +26,8 @@ public class Aquarium extends JPanel {
     }
 
     @Override
-    public void paint(Graphics g) {
-        super.paint(g);
+    public void paintComponent(Graphics g) {
+        super.paintComponent(g);
         for (AquariumItem aq_it: items){
            aq_it.draw(g);
        }
@@ -33,7 +35,7 @@ public class Aquarium extends JPanel {
     public void fill(){
         stF = new StoneFactory(NB_STONES);
         swF = new SeaweedFactory(NB_SEAWEED);
-        items.add(new Fish(50));
+        fshF = new FishFactory(NB_FISH);
         items.addAll(stF.getItemCollection());
 
     }
