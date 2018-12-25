@@ -24,7 +24,7 @@ public class  SeaweedFactory extends AquariumItemFactory{
 
     private AquariumItem sink(Collection<AquariumItem> items, AquariumItem instance) {
             if (instance.intersects(items)) {
-                instance.setPosition(new Point((int) (Math.random() * 300), (int) (Math.random() * 300)));
+                instance.setPosition(new Point((int) (Math.random() * 350), (int) (Math.random() * 350)));
                 sink(items,instance);
             }
         return instance;

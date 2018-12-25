@@ -1,4 +1,5 @@
 import java.awt.*;
+import java.nio.Buffer;
 import java.util.Collection;
 import java.util.concurrent.ThreadLocalRandom;
 
@@ -10,8 +11,8 @@ public abstract class AquariumItem {
     protected int height;
 
     public AquariumItem(int width){
-        this.width = width;
-        this.height = (width/2);
+        this.width = 50;
+        this.height = 50;
         this.position = new Point(ThreadLocalRandom.current().nextInt(0, 350),ThreadLocalRandom.current().nextInt(0, 350));
 
     }

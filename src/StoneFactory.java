@@ -9,6 +9,7 @@ public class StoneFactory extends AquariumItemFactory {
     private Stone st = new Stone(50);
     int maxWidth = st.MAX_WIDTH;
     int minWidth = st.MIN_WIDTH;
+
     int numberOfStones;
 
     public StoneFactory(int numberOfStones){
@@ -26,7 +27,7 @@ public class StoneFactory extends AquariumItemFactory {
 
     private AquariumItem sink(Collection<AquariumItem> items, AquariumItem instance){
             if(instance.intersects(items)) {
-                instance.setPosition(new Point((int) (Math.random() * 300),(int) (Math.random() * 300)));
+                instance.setPosition(new Point((int) (Math.random() * 350),(int) (Math.random() * 350)));
                 sink(items, instance);
             }
         return instance;}
@@ -36,7 +37,7 @@ public class StoneFactory extends AquariumItemFactory {
         for(int i=0; i<numberOfStones;i++){
             try{
                 this.semafero.acquire();
-                this.aq_it.add(this.newItem());
+                this.aq_it.add(newItem());
             }
             catch(Exception e){
                 e.printStackTrace();
