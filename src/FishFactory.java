@@ -8,8 +8,8 @@ public class  FishFactory extends AquariumItemFactory{
     int minWidth = fsh.MIN_WIDTH;
     int numberOfFish;
 
-    public FishFactory(int numberOfSeaweed) {
-        this.numberOfFish = numberOfSeaweed;
+    public FishFactory(int numberOfFish) {
+        this.numberOfFish = numberOfFish;
         this.run();
     }
 

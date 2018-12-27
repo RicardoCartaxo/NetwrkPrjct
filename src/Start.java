@@ -2,7 +2,9 @@ public class Start {
 
     public static void main(String[] args) {
 
-        Animation animation = new Animation("Animation JFrame");
+        Session session = new Session();
+        Thread t = new Thread(session);
+        t.start();
 
     }
 

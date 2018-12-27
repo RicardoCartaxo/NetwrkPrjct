@@ -5,23 +5,14 @@ import java.io.File;
 
 public class Fish extends MobileItem {
 
-    private static File file = new File("C:/Users/user/Desktop/fish.png");
-    private static Image image;
+    private static ImageIcon icon = new ImageIcon("C:/Users/user/Desktop/fish.png");
+    private static Image image = icon.getImage();
 
     public final int MIN_WIDTH = 30;
     public final int MAX_WIDTH = 50;
 
     public Fish(int width){
-        super(width);
-        if(image == null) {
-            try {
-                image = ImageIO.read(file);
-            } catch (Exception e) {
-                e.printStackTrace();
-            } finally {
-                System.out.println("fish");
-            }
-        }
+        super(width,image);
     }
 
     @Override

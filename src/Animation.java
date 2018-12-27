@@ -3,14 +3,18 @@ import java.awt.*;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 
-public class Animation extends JFrame {
+public class Animation extends JFrame{
+
+    private Aquarium aquarium;
+    Thread t1;
 
     public Animation(String title) throws HeadlessException {
         super(title);
+        aquarium = new Aquarium();
         this.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
         this.setSize(400,400);
         this.setLocationRelativeTo(null);
-        this.add(new Aquarium());
+        this.add(aquarium);
         this.addWindowListener(new WindowAdapter() {
             @Override
             public void windowClosing(WindowEvent e) {
@@ -22,5 +26,9 @@ public class Animation extends JFrame {
             }
         });
         this.setVisible(true);
+    }
+
+    public Aquarium getAquarium(){
+        return this.aquarium;
     }
 }

@@ -10,20 +10,11 @@ public class Stone extends AquariumItem {
     public final int MIN_WIDTH = 30;
     public final int MAX_WIDTH = 50;
 
-    private static File file = new File("C:/Users/user/Desktop/stone.png");
-    private static Image image;
+    private static ImageIcon icon = new ImageIcon("C:/Users/user/Desktop/stone.png");
+    private static Image image = icon.getImage();
 
     public Stone(int width){
-        super(width);
-        if(image == null) {
-            try {
-                image = ImageIO.read(file);
-            } catch (Exception e) {
-                e.printStackTrace();
-            } finally {
-                System.out.println("stone");
-            }
-        }
+        super(width,image);
     }
 
     public int getMinWidth(){ return this.MIN_WIDTH; }

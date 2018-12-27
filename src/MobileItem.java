@@ -1,3 +1,4 @@
+import javax.swing.*;
 import java.awt.*;
 import java.util.Random;
 import java.util.ArrayList;
@@ -5,60 +6,111 @@ import java.util.Collection;
 
 public abstract class MobileItem extends AquariumItem implements Mobile {
 
-    private float speed;
-    private static RandomNumber rn = new RandomNumber();
+    private int speed;
+
+    private boolean reachedDestination;
+    private Point destination;
+    int run;
+    int startX, endX, startY, endY;
 
 
-    public MobileItem(int width) {
-        super(width);
-        speed = Math.round((1 / width) * 10);
+
+    private int counter = 0;
+
+    public MobileItem(int width, Image image) {
+        super(width,image);
+        speed = 3;
+        reachedDestination = false;
+        run = 0;
+        this.startX=-50;
+        this.startY=-50;
+        this.endX=400;
+        this.endY=400;
     }
 
     @Override
     public boolean move(Point destination) {
-        while(this.position.x < destination.x){
-            if((destination.x - this.position.x) >= 3)
-                this.position.x = this.position.x + 3;
-            else{
-                this.position.x = this.position.x + (destination.x - this.position.x);
+        if(run==0) {
+            this.destination = destination;
+            run++;
+        }
+        if(reachedDestination){
+            this.destination = destination;
+            reachedDestination = false;
+        }
+        if(!reachedDestination) {
+            if (this.position.x < this.destination.x) {
+                if ((this.destination.x - this.position.x) >= speed)
+                    this.position.x = this.position.x + speed;
+                else {
+                    this.position.x = this.position.x + (this.destination.x - this.position.x);
+                }
+            }
+            if (this.position.x > this.destination.x) {
+                if ((this.position.x - this.destination.x) >= speed) {
+                    this.position.x = this.position.x - speed;
+                } else {
+                    this.position.x = this.position.x - (this.position.x - this.destination.x);
+                }
+            }
+            if (this.position.y < this.destination.y) {
+                if (this.destination.y - this.position.y >= speed) {
+                    this.position.y = this.position.y + speed;
+                } else {
+                    this.position.y = this.position.y + (this.destination.y - this.position.y);
+                }
+            }
+            if (this.position.y > this.destination.y) {
+                if ((this.position.y - this.destination.y) >= speed) {
+                    this.position.y = this.position.y - speed;
+                } else {
+                    this.position.y = this.position.y - (this.position.y - this.destination.y);
+                }
+            }
+            if(this.position.x == this.destination.x && this.position.y == this.destination.y){
+                reachedDestination = true;
             }
         }
-        while(this.position.x > destination.x){
-            if((this.position.x - destination.x) >= 3){
-                this.position.x = this.position.x - 3;
-            }else{
-                this.position.x = this.position.x - (this.position.x - destination.x);
-            }
-        }
-        while(this.position.y < destination.y){
-            if(destination.y - this.position.y >= 3){
-                this.position.y = this.position.y + 3;
-            }else{
-                this.position.y = this.position.y + (destination.y - this.position.y);
-            }
-        }
-        while(this.position.y > destination.y){
-            if((this.position.y - destination.y) >= 3) {
-                this.position.y = this.position.y - 3;
-            }else{
-                this.position.y = this.position.y - (this.position.y - destination.y);
-            }
-        }
+
         return false;
+    }
+
+    private void getStaticObj(Collection<AquariumItem> col){
+        for (AquariumItem elem : col) {
+            if(!(elem instanceof MobileItem)&&!(this.exclX.contains(elem.position.x))){
+                this.exclX.add(elem.position.x);
+            }
+            if(!(elem instanceof MobileItem)&&!(this.exclY.contains(elem.position.y))){
+                this.exclY.add(elem.position.y);
+            }
+        }
+        counter++;
+
     }
 
     @Override
     public Point target(Collection<AquariumItem> neighbours) {
-        for (AquariumItem elem : neighbours) {
-            if(!(this.exclX.contains(elem.position.x))){
-                this.exclX.add(elem.position.x);
-            }
-            if(!(this.exclY.contains(elem.position.y))){
-                this.exclY.add(elem.position.y);
-            }
-
+        if(counter==0) {
+            getStaticObj(neighbours);
         }
-        return new Point( (generateRandom(0,350,exclX)), (generateRandom(0,350,exclY)));
+        return new Point( (generateRandom(startX,endX,exclX)), (generateRandom(startY,endY,exclY)));
+    }
+
+    public boolean setStartX(int startX){
+        this.startX=startX;
+        return true;
+    }
+    public boolean setEndX(int endX){
+        this.endX=endX;
+        return true;
+    }
+    public boolean setStartY(int startY){
+        this.startY=startY;
+        return true;
+    }
+    public boolean setEndY(int endY){
+        this.endY=endY;
+        return true;
     }
 
 

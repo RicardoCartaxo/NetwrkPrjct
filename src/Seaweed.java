@@ -10,27 +10,17 @@ public class Seaweed extends AquariumItem {
     public final int MIN_WIDTH = 30;
     public final int MAX_WIDTH = 50;
 
-    private static File file = new File("C:/Users/user/Desktop/seaweed.png");
-    private static Image image;
+   // private static File file = new File("C:/Users/user/Desktop/seaweed.png");
+    //private static Image image;
+
+   private static ImageIcon icon = new ImageIcon("C:/Users/user/Desktop/seaweed.png");
+   private static Image image = icon.getImage();
 
 
     public Seaweed(int width){
-        super(width);
-        if(image == null) {
-            try {
-                image = ImageIO.read(file);
-            } catch (Exception e) {
-                e.printStackTrace();
-            } finally {
-                System.out.println("seaweed");
-            }
-        }
+        super(width,image);
     }
 
-    @Override
-    public void draw(Graphics G) {
-        G.drawImage(image,position.x,position.y,width,height,null);
-    }
 
     public int getMinWidth(){
         return this.MIN_WIDTH;

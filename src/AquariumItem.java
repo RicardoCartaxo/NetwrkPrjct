@@ -10,9 +10,12 @@ public abstract class AquariumItem {
     protected int width;
     protected int height;
 
-    public AquariumItem(int width){
+    protected Image image;
+
+    public AquariumItem(int width, Image image){
         this.width = 50;
         this.height = 50;
+        this.image = image;
         this.position = new Point(ThreadLocalRandom.current().nextInt(0, 350),ThreadLocalRandom.current().nextInt(0, 350));
 
     }
@@ -26,7 +29,9 @@ public abstract class AquariumItem {
         return new Rectangle(this.position.x, this.position.y, this.width,this.height);
     }
 
-    public abstract void draw(Graphics G);
+    public void draw(Graphics G){
+        G.drawImage(image,position.x,position.y,width,height,null);
+    }
 
     public boolean intersects(Collection<AquariumItem> c){
         for (AquariumItem elem : c) {
@@ -43,6 +48,10 @@ public abstract class AquariumItem {
     //Extra method to set width according to min and max final int
     protected void setWidth(int x){
         this.width = x;
+    }
+
+    public Point getPosition(){
+        return this.position;
     }
 
 }

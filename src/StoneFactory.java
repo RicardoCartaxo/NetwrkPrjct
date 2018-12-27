@@ -4,8 +4,6 @@ import java.util.concurrent.ThreadLocalRandom;
 
 public class StoneFactory extends AquariumItemFactory {
 
-    protected RandomNumber rn = new RandomNumber();
-
     private Stone st = new Stone(50);
     int maxWidth = st.MAX_WIDTH;
     int minWidth = st.MIN_WIDTH;
