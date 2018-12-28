@@ -18,8 +18,8 @@ public class Aquarium extends JPanel implements ActionListener{
     private int ID;
 
     // Going over around 25 sometimes causes a StackOverflowException (due to there not being any more space on the canvas)
-    static final int NB_STONES = 12;
-    static final int NB_SEAWEED = 10;
+    static final int NB_STONES = 2;
+    static final int NB_SEAWEED = 2;
     static final int NB_FISH = 4;
 
     private StoneFactory stF;
@@ -70,17 +70,6 @@ public class Aquarium extends JPanel implements ActionListener{
         fshF = new FishFactory(NB_FISH);
         stF.addItems(fshF.getItemCollection());
         items.addAll(stF.getItemCollection());
-    }
-
-   public void setBoundaries() {
-        for (AquariumItem aq_it : items) {
-            if (aq_it instanceof MobileItem) {
-                if (left) {
-                    ((MobileItem) aq_it).setStartX(0);
-                } else if (right)
-                    ((MobileItem) aq_it).setEndX(350);
-            }
-        }
     }
 
     public void go() {
@@ -163,7 +152,7 @@ public class Aquarium extends JPanel implements ActionListener{
 
                         //Control ID contained in Message
                         if((Character.getNumericValue(inMessage.charAt(3))==this.ID)){
-                            //Create new fish (add to items) and show it at the position!
+                            items.add(new Fish(50));
                         }
 
                         break;
@@ -180,15 +169,8 @@ public class Aquarium extends JPanel implements ActionListener{
         }
     }
 
-    public int getPort(){
-        return this.port;
-    }
-
     public int getID(){
         return this.ID;
-    }
-    public void setPort(int port){
-        this.port = port;
     }
 
 }
