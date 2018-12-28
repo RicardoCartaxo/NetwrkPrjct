@@ -12,6 +12,7 @@ import java.util.*;
 public class Aquarium extends JPanel implements ActionListener{
 
     private InetAddress realServerName;
+    //private static int helper_port
     private int port = 44500;
 
     // Going over around 25 sometimes causes a StackOverflowException (due to there not being any more space on the canvas)
@@ -121,28 +122,26 @@ public class Aquarium extends JPanel implements ActionListener{
             //input and output streams
             byte[] buffer = new byte[256];
 
-            System.out.println(outMessage.charAt(0));
-
             switch(outMessage.charAt(0)){
-                case '0':
-                    System.out.println("CLIENT IS ALIVE");
-                    break;
                 case '1':
-                    System.out.println("CLIENT CASE 1");
-                    //sending message fishHasMoved
+                    System.out.println("CLIENT Case 1: Do Nothing");
+                    //sending message doNothing
                     buffer = outMessage.getBytes();
                     packet = new DatagramPacket(buffer, buffer.length, realServerName, port);
                     client.send(packet);
                     break;
                 case '2':
+                    System.out.println("CLIENT Case 2: My Fish Has Moved");
                     //sending message fishHasMoved
                     buffer = outMessage.getBytes();
                     packet = new DatagramPacket(buffer, buffer.length, realServerName, port);
                     client.send(packet);
                     break;
+                default:
+                System.out.println("CLIENT Default");
             }
 
-            if (!inMessage.equals("exit")) {
+            if (!inMessage.isEmpty()) {
                 //receiving message
                 packet = new DatagramPacket(buffer, buffer.length);
                 client.receive(packet);

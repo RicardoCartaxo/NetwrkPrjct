@@ -5,11 +5,14 @@ import java.awt.event.WindowEvent;
 
 public class Animation extends JFrame{
 
+
     private Aquarium aquarium;
     Thread t1;
+    String title;
 
     public Animation(String title) throws HeadlessException {
         super(title);
+        this.title=title;
         aquarium = new Aquarium();
         this.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
         this.setSize(400,400);
@@ -26,6 +29,11 @@ public class Animation extends JFrame{
             }
         });
         this.setVisible(true);
+    }
+
+    @Override
+    public String toString() {
+        return "Animation " + this.title;
     }
 
     public Aquarium getAquarium(){

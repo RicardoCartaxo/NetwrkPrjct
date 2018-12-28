@@ -8,8 +8,8 @@ import java.net.SocketTimeoutException;
 
 public class Session extends JPanel implements Runnable{
 
-    private static Animation anim1 = new Animation("Anim1");
-    private static Animation anim2 = new Animation("Anim2");
+    private Animation anim1 = new Animation("Anim1");
+    private Animation anim2 = new Animation("Anim2");
     private int rcv_port = 44500;
     int counter = 0;
     Thread t1;
@@ -31,25 +31,26 @@ public class Session extends JPanel implements Runnable{
                     DatagramSocket server=new DatagramSocket(rcv_port);
                     DatagramPacket packet = null;
 
-                //input and output streams
+                    //input and output streams
                     byte[] buffer=new byte[256];
 
 
 
                     //receiving message
                     packet=new DatagramPacket(buffer, buffer.length);
-                    System.out.println("Session waiting for message on port " + rcv_port + "...");
+                    System.out.println("\nSession waiting for message on port " + rcv_port + "...");
+
                     if(!(counter == 0)){{
                         server.receive(packet);
                         inMessage = new String(packet.getData(), 0, packet.getLength());
                     }}
 
                     if(!inMessage.isEmpty()){
-                        InetAddress address = packet.getAddress();
-                        int rep_port = packet.getPort();
+                        InetAddress address;
+                        int rep_port;
                     switch (inMessage.charAt(0)){
                     case '1':
-                        System.out.println("CASE 1 SERVER IS RUNNING");
+                        System.out.println("SERVER case1: Do Nothing");
                         System.out.println("[Session Received message] -> "+inMessage);
                         //sending message
                         address = packet.getAddress();
@@ -61,18 +62,45 @@ public class Session extends JPanel implements Runnable{
                         server.send(packet);
                         break;
                     case '2':
-                        System.out.println("CASE 2 FISH HAS MOVED");
-                        System.out.println("[Session Received message] -> "+inMessage);
-                        //sending message
+                        System.out.println("SERVER case2: FishHasMoved");
+                        System.out.println("[Session Received FishHasMoved message] -> "+inMessage);
+
+                        //tell OTHER animation !!
                         address = packet.getAddress();
                         rep_port = packet.getPort();
-                        outMessage=new String(inMessage.toUpperCase());
-                        System.out.println("[Session Replying to Message] -> "+outMessage);
-                        buffer = outMessage.getBytes();
-                        packet = new DatagramPacket(buffer, buffer.length, address, rep_port);
-                        server.send(packet);
+
+                        if(rep_port==this.anim1.getAquarium().getPort()){
+
+                            rep_port=this.anim2.getAquarium().getPort();
+                            System.out.println("Session has port "+rep_port);
+                            outMessage=new String(inMessage.toUpperCase());
+                            System.out.println("[Session Notifying "+this.anim2+" ] -> "+outMessage);
+                            buffer = outMessage.getBytes();
+                            packet = new DatagramPacket(buffer, buffer.length, address, rep_port);
+                            server.send(packet);
+
+                        }else if(rep_port==this.anim2.getAquarium().getPort()) {
+
+                            rep_port=this.anim1.getAquarium().getPort();
+                            System.out.println("Session has port "+rep_port);
+                            outMessage=new String(inMessage.toUpperCase());
+                            System.out.println("[Session Notifying "+this.anim1+" ] -> "+outMessage);
+                            buffer = outMessage.getBytes();
+                            packet = new DatagramPacket(buffer, buffer.length, address, rep_port);
+                            server.send(packet);
+                        }else{
+                            outMessage=new String(inMessage.toUpperCase());
+                            System.out.println("[Session Notifying ALL] -> "+outMessage);
+                            buffer = outMessage.getBytes();
+                            packet = new DatagramPacket(buffer, buffer.length, address, rep_port);
+                            server.send(packet);
+                        }
+
+                        System.out.println("Exited Session If Else-If Else");
+                        break;
+
                     default:
-                        System.out.println("CASE 0 SERVER IS RUNNING");
+                        System.out.println("CASE 0: Server Running");
                         counter++;
                         break;
                 }}
