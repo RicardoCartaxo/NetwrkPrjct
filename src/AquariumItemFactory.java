@@ -5,7 +5,7 @@ import java.util.concurrent.Semaphore;
 
 public abstract class AquariumItemFactory< T extends AquariumItem> implements Runnable{
 
-    protected Collection<AquariumItem> aq_it = Collections.synchronizedList(new ArrayList<AquariumItem>());
+    protected Collection<AquariumItem> aq_it = Collections.synchronizedList(new ArrayList<>());
     protected static Semaphore semafero = new Semaphore(1);
 
     public abstract T newItem();

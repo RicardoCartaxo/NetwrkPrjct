@@ -1,9 +1,10 @@
+import javax.swing.*;
 import java.awt.*;
 import java.nio.Buffer;
 import java.util.Collection;
 import java.util.concurrent.ThreadLocalRandom;
 
-public abstract class AquariumItem {
+public abstract class AquariumItem extends JComponent {
 
     //The 3 protected attributes
     protected Point position;
@@ -52,6 +53,10 @@ public abstract class AquariumItem {
 
     public Point getPosition(){
         return this.position;
+    }
+
+    public void setInvisible(){
+        this.setVisible(false);
     }
 
 }

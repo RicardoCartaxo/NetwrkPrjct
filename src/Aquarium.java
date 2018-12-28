@@ -12,8 +12,10 @@ import java.util.*;
 public class Aquarium extends JPanel implements ActionListener{
 
     private InetAddress realServerName;
-    //private static int helper_port
     private int port = 44500;
+
+    private static int ID_helper = 0;
+    private int ID;
 
     // Going over around 25 sometimes causes a StackOverflowException (due to there not being any more space on the canvas)
     static final int NB_STONES = 12;
@@ -24,7 +26,7 @@ public class Aquarium extends JPanel implements ActionListener{
     private SeaweedFactory swF;
     private FishFactory fshF;
 
-    protected Collection<AquariumItem> items = new ArrayList<>();
+    protected Collection<AquariumItem> items;
     protected Timer tm = new Timer(10, this);
 
 
@@ -37,7 +39,10 @@ public class Aquarium extends JPanel implements ActionListener{
 
     public Aquarium() {
         this.setBackground(Color.CYAN);
+        items = new ArrayList<>();
         this.fill();
+        ID_helper++;
+        ID=ID_helper;
         this.setVisible(true);
         this.left = false;
         this.right = false;
@@ -94,19 +99,17 @@ public class Aquarium extends JPanel implements ActionListener{
 
     @Override
     public void actionPerformed(ActionEvent e) {
-        go();
-        repaint();
-        run();
+        go(); //make them movw
+        repaint(); //repaint
+        run(); //set Message, send Message, receive message
     }
 
     public void run() {
         for (AquariumItem aq_it : items) {
             if (aq_it instanceof MobileItem) {
-                if(aq_it.getPosition().x < 0 ) {
-                    outMessage = "2: Fish exited left @ " + aq_it.getPosition() + "!";
-                }
-                if(aq_it.getPosition().x >350 ) {
-                    outMessage = "2: Fish exited right @ " + aq_it.getPosition() + "!";
+                if(aq_it.getPosition().x < 0 || aq_it.getPosition().x >350) {
+                    outMessage = "2: " + aq_it.getPosition() + " : " + ID;
+                    // this.items.remove(aq_it);
                 }
                 else{
                     outMessage = "1: Do Nothing";
@@ -148,6 +151,23 @@ public class Aquarium extends JPanel implements ActionListener{
 
                 inMessage = new String(packet.getData(), 0, packet.getLength());
                 System.out.println("[Aquarium Received message] -> " + inMessage);
+
+                switch(inMessage.charAt(0)){
+                    case '1':
+
+                        break;
+                    case '2':
+
+                        break;
+                    case '!':
+
+                        //Control ID contained in Message
+                        if((Character.getNumericValue(inMessage.charAt(3))==this.ID)){
+                            //Create new fish (add to items) and show it at the position!
+                        }
+
+                        break;
+                }
             }
 
             //closing socket
@@ -162,6 +182,10 @@ public class Aquarium extends JPanel implements ActionListener{
 
     public int getPort(){
         return this.port;
+    }
+
+    public int getID(){
+        return this.ID;
     }
     public void setPort(int port){
         this.port = port;

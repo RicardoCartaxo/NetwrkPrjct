@@ -1,4 +1,5 @@
 import javax.swing.*;
+import javax.swing.text.Position;
 import java.awt.*;
 import java.io.IOException;
 import java.net.DatagramPacket;
@@ -8,8 +9,7 @@ import java.net.SocketTimeoutException;
 
 public class Session extends JPanel implements Runnable{
 
-    private Animation anim1 = new Animation("Anim1");
-    private Animation anim2 = new Animation("Anim2");
+    private Animation[] anim_arr = new Animation[2];
     private int rcv_port = 44500;
     int counter = 0;
     Thread t1;
@@ -19,6 +19,9 @@ public class Session extends JPanel implements Runnable{
     private String inMessage="0";
 
     public Session(){
+        for(int i = 0; i < anim_arr.length;i++){
+            anim_arr[i] = new Animation("Anim " +(i+1)+"");
+        }
     }
 
     @Override
@@ -48,62 +51,53 @@ public class Session extends JPanel implements Runnable{
                     if(!inMessage.isEmpty()){
                         InetAddress address;
                         int rep_port;
-                    switch (inMessage.charAt(0)){
-                    case '1':
-                        System.out.println("SERVER case1: Do Nothing");
-                        System.out.println("[Session Received message] -> "+inMessage);
-                        //sending message
-                        address = packet.getAddress();
-                        rep_port = packet.getPort();
-                        outMessage=new String(inMessage.toUpperCase());
-                        System.out.println("[Session Replying to Message] -> "+outMessage);
-                        buffer = outMessage.getBytes();
-                        packet = new DatagramPacket(buffer, buffer.length, address, rep_port);
-                        server.send(packet);
-                        break;
-                    case '2':
-                        System.out.println("SERVER case2: FishHasMoved");
-                        System.out.println("[Session Received FishHasMoved message] -> "+inMessage);
+                        int ID;
+                        Position pos;
+                        switch (inMessage.charAt(0)){
+                            case '1':
+                                System.out.println("SERVER case1: Do Nothing");
+                                System.out.println("[Session Received message] -> "+inMessage);
+                                //sending message
+                                address = packet.getAddress();
+                                rep_port = packet.getPort();
+                                outMessage=new String(inMessage.toUpperCase());
+                                System.out.println("[Session Replying to Message] -> "+outMessage);
+                                buffer = outMessage.getBytes();
+                                packet = new DatagramPacket(buffer, buffer.length, address, rep_port);
+                                server.send(packet);
+                                break;
+                            case '2':
+                                //TELL OTHER ANIMATION TO SPAWN FISH
+                                System.out.println("SERVER case2: FishHasMoved");
+                                System.out.println("[Session Received FishHasMoved message] -> "+inMessage);
 
-                        //tell OTHER animation !!
-                        address = packet.getAddress();
-                        rep_port = packet.getPort();
+                                //Getting needed info from packet and inMessage
+                                address = packet.getAddress();
+                                rep_port = packet.getPort();
+                                ID = (Character.getNumericValue(inMessage.charAt(inMessage.length()-1)));
+                                pos = null;
+                                //Changing ID to send to OTHER aquarium
+                                for(int i=0; i < anim_arr.length;i++){
+                                    if (anim_arr[i].getAquarium().getID() != ID){
+                                        ID = anim_arr[i].getAquarium().getID();
+                                    }
+                                }
 
-                        if(rep_port==this.anim1.getAquarium().getPort()){
+                                // Message to send, if char(0)='!' then Aquarium needs to check ID
+                                // If ID is the Aquariums, he needs to spawn a new fish
+                                outMessage="!: "+ID+"";
+                                System.out.println("[Session Notifying ALL] -> "+outMessage);
+                                buffer = outMessage.getBytes();
+                                packet = new DatagramPacket(buffer, buffer.length, address, rep_port);
+                                server.send(packet);
+                                break;
 
-                            rep_port=this.anim2.getAquarium().getPort();
-                            System.out.println("Session has port "+rep_port);
-                            outMessage=new String(inMessage.toUpperCase());
-                            System.out.println("[Session Notifying "+this.anim2+" ] -> "+outMessage);
-                            buffer = outMessage.getBytes();
-                            packet = new DatagramPacket(buffer, buffer.length, address, rep_port);
-                            server.send(packet);
-
-                        }else if(rep_port==this.anim2.getAquarium().getPort()) {
-
-                            rep_port=this.anim1.getAquarium().getPort();
-                            System.out.println("Session has port "+rep_port);
-                            outMessage=new String(inMessage.toUpperCase());
-                            System.out.println("[Session Notifying "+this.anim1+" ] -> "+outMessage);
-                            buffer = outMessage.getBytes();
-                            packet = new DatagramPacket(buffer, buffer.length, address, rep_port);
-                            server.send(packet);
-                        }else{
-                            outMessage=new String(inMessage.toUpperCase());
-                            System.out.println("[Session Notifying ALL] -> "+outMessage);
-                            buffer = outMessage.getBytes();
-                            packet = new DatagramPacket(buffer, buffer.length, address, rep_port);
-                            server.send(packet);
+                            default:
+                                System.out.println("CASE 0: Server Running");
+                                counter++;
+                                break;
                         }
-
-                        System.out.println("Exited Session If Else-If Else");
-                        break;
-
-                    default:
-                        System.out.println("CASE 0: Server Running");
-                        counter++;
-                        break;
-                }}
+                    }
 
                 //closing socket
                 server.close();
@@ -120,10 +114,6 @@ public class Session extends JPanel implements Runnable{
                 break;
             }
         }
-
-    }
-
-    public void add(int position, Animation animation){
 
     }
 }
