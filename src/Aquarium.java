@@ -8,11 +8,12 @@ import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetAddress;
 import java.util.*;
+import java.util.List;
 
 public class Aquarium extends JPanel implements ActionListener{
 
     private InetAddress realServerName;
-    private int port = 44500;
+    private int port;
 
     private static int ID_helper = 0;
     private int ID;
@@ -26,26 +27,23 @@ public class Aquarium extends JPanel implements ActionListener{
     private SeaweedFactory swF;
     private FishFactory fshF;
 
-    protected Collection<AquariumItem> items;
+    private List<AquariumItem> items;
+
     protected Timer tm = new Timer(10, this);
-
-
-    private  boolean right;
-    private boolean left;
 
     private String outMessage = "0";
     private String inMessage = "1";
 
 
     public Aquarium() {
+        ID_helper++;
+        ID=ID_helper;
+        port  = 44500;
         this.setBackground(Color.CYAN);
         items = new ArrayList<>();
         this.fill();
-        ID_helper++;
-        ID=ID_helper;
+
         this.setVisible(true);
-        this.left = false;
-        this.right = false;
         try{
             realServerName = InetAddress.getLocalHost();
         }catch(Exception e) {
@@ -57,7 +55,7 @@ public class Aquarium extends JPanel implements ActionListener{
     @Override
     public void paintComponent(Graphics g) {
         super.paintComponent(g);
-        for (AquariumItem aq_it : items) {
+        for (AquariumItem aq_it: items){
             aq_it.draw(g);
         }
         tm.start();
@@ -73,7 +71,7 @@ public class Aquarium extends JPanel implements ActionListener{
     }
 
     public void go() {
-        for (AquariumItem aq_it : items) {
+        for (AquariumItem aq_it: items) {
             if (aq_it instanceof MobileItem) {
                 ((MobileItem) aq_it).move(((MobileItem) aq_it).target(items));
                     try {
@@ -82,23 +80,26 @@ public class Aquarium extends JPanel implements ActionListener{
                         e.printStackTrace();
                     }
                 }
-            }
+        }
         }
 
 
     @Override
     public void actionPerformed(ActionEvent e) {
-        go(); //make them movw
+        go(); //make them move
         repaint(); //repaint
         run(); //set Message, send Message, receive message
     }
 
     public void run() {
-        for (AquariumItem aq_it : items) {
+
+        AquariumItem toRemove = null;
+
+        for (AquariumItem aq_it: items) {
             if (aq_it instanceof MobileItem) {
                 if(aq_it.getPosition().x < 0 || aq_it.getPosition().x >350) {
                     outMessage = "2: " + aq_it.getPosition() + " : " + ID;
-                    // this.items.remove(aq_it);
+                    toRemove = aq_it;
                 }
                 else{
                     outMessage = "1: Do Nothing";
@@ -112,25 +113,23 @@ public class Aquarium extends JPanel implements ActionListener{
             DatagramPacket packet = null;
 
             //input and output streams
-            byte[] buffer = new byte[256];
+            byte[] buffer = new byte[512];
 
             switch(outMessage.charAt(0)){
                 case '1':
-                    System.out.println("CLIENT Case 1: Do Nothing");
                     //sending message doNothing
                     buffer = outMessage.getBytes();
                     packet = new DatagramPacket(buffer, buffer.length, realServerName, port);
                     client.send(packet);
                     break;
                 case '2':
-                    System.out.println("CLIENT Case 2: My Fish Has Moved");
                     //sending message fishHasMoved
                     buffer = outMessage.getBytes();
                     packet = new DatagramPacket(buffer, buffer.length, realServerName, port);
                     client.send(packet);
                     break;
                 default:
-                System.out.println("CLIENT Default");
+                    break;
             }
 
             if (!inMessage.isEmpty()) {
@@ -142,19 +141,16 @@ public class Aquarium extends JPanel implements ActionListener{
                 System.out.println("[Aquarium Received message] -> " + inMessage);
 
                 switch(inMessage.charAt(0)){
-                    case '1':
-
-                        break;
-                    case '2':
-
-                        break;
                     case '!':
 
                         //Control ID contained in Message
                         if((Character.getNumericValue(inMessage.charAt(3))==this.ID)){
                             items.add(new Fish(50));
+                        }else if(Character.getNumericValue(inMessage.charAt(3))!=this.ID){
+                            items.remove(toRemove);
                         }
-
+                        break;
+                    default:
                         break;
                 }
             }

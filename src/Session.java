@@ -10,7 +10,8 @@ import java.net.SocketTimeoutException;
 public class Session extends JPanel implements Runnable{
 
     private Animation[] anim_arr = new Animation[2];
-    private int rcv_port = 44500;
+    private int rcv_port1 = 44500;
+    private int rcv_port2 = 44501;
     int counter = 0;
     Thread t1;
     Thread t2;
@@ -31,21 +32,25 @@ public class Session extends JPanel implements Runnable{
             try
             {
                     //server datagram socket and packet
-                    DatagramSocket server=new DatagramSocket(rcv_port);
-                    DatagramPacket packet = null;
+                    DatagramSocket server1=new DatagramSocket(rcv_port1);
+                    DatagramPacket packet1 = null;
+                    DatagramSocket server2=new DatagramSocket(rcv_port2);
+                    DatagramPacket packet2 = null;
 
                     //input and output streams
-                    byte[] buffer=new byte[256];
+                    byte[] buffer=new byte[512];
 
 
 
                     //receiving message
-                    packet=new DatagramPacket(buffer, buffer.length);
-                    System.out.println("\nSession waiting for message on port " + rcv_port + "...");
+                    packet1=new DatagramPacket(buffer, buffer.length);
+                    System.out.println("\nSession waiting for message on port " + rcv_port1 + "...");
+                    packet2=new DatagramPacket(buffer, buffer.length);
+                    System.out.println("\nSession waiting for message on port " + rcv_port2 + "...");
 
                     if(!(counter == 0)){{
-                        server.receive(packet);
-                        inMessage = new String(packet.getData(), 0, packet.getLength());
+                        server1.receive(packet1);
+                        inMessage = new String(packet1.getData(), 0, packet1.getLength());
                     }}
 
                     if(!inMessage.isEmpty()){
@@ -75,12 +80,12 @@ public class Session extends JPanel implements Runnable{
                                 address = packet.getAddress();
                                 rep_port = packet.getPort();
                                 ID = (Character.getNumericValue(inMessage.charAt(inMessage.length()-1)));
-                                pos = null;
                                 //Changing ID to send to OTHER aquarium
-                                for(int i=0; i < anim_arr.length;i++){
-                                    if (anim_arr[i].getAquarium().getID() != ID){
-                                        ID = anim_arr[i].getAquarium().getID();
-                                    }
+                                if(ID==1){
+                                    ID=2;
+                                }
+                                if(ID==2){
+                                    ID=1;
                                 }
 
                                 // Message to send, if char(0)='!' then Aquarium needs to check ID
