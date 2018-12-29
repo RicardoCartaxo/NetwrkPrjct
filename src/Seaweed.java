@@ -10,9 +10,6 @@ public class Seaweed extends AquariumItem {
     public final int MIN_WIDTH = 30;
     public final int MAX_WIDTH = 50;
 
-   // private static File file = new File("C:/Users/user/Desktop/seaweed.png");
-    //private static Image image;
-
    private static ImageIcon icon = new ImageIcon("C:/Users/user/Desktop/seaweed.png");
    private static Image image = icon.getImage();
 

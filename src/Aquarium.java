@@ -18,7 +18,7 @@ public class Aquarium extends JPanel implements ActionListener{
     private static int ID_helper = 0;
     private int ID;
 
-    // Going over around 25 sometimes causes a StackOverflowException (due to there not being any more space on the canvas)
+
     static final int NB_STONES = 2;
     static final int NB_SEAWEED = 2;
     static final int NB_FISH = 4;
@@ -36,13 +36,12 @@ public class Aquarium extends JPanel implements ActionListener{
 
 
     public Aquarium() {
-        ID_helper++;
-        ID=ID_helper;
         port  = 44500;
         this.setBackground(Color.CYAN);
         items = new ArrayList<>();
         this.fill();
-
+        ID_helper++;
+        ID=ID_helper;
         this.setVisible(true);
         try{
             realServerName = InetAddress.getLocalHost();
@@ -93,18 +92,23 @@ public class Aquarium extends JPanel implements ActionListener{
 
     public void run() {
 
-        AquariumItem toRemove = null;
+        List<AquariumItem> itemsToRemove =new ArrayList<>();
 
         for (AquariumItem aq_it: items) {
             if (aq_it instanceof MobileItem) {
-                if(aq_it.getPosition().x < 0 || aq_it.getPosition().x >350) {
+                if(aq_it.getPosition().x < 0 || aq_it.getPosition().x >300) {
                     outMessage = "2: " + aq_it.getPosition() + " : " + ID;
-                    toRemove = aq_it;
+                    itemsToRemove.add(aq_it);
                 }
                 else{
                     outMessage = "1: Do Nothing";
                 }
             }
+        }
+        try {
+            Thread.sleep(5);
+        } catch (Exception e) {
+            e.printStackTrace();
         }
         try {
 
@@ -117,19 +121,21 @@ public class Aquarium extends JPanel implements ActionListener{
 
             switch(outMessage.charAt(0)){
                 case '1':
+                    System.out.println("CLIENT Case 1: Do Nothing");
                     //sending message doNothing
                     buffer = outMessage.getBytes();
                     packet = new DatagramPacket(buffer, buffer.length, realServerName, port);
                     client.send(packet);
                     break;
                 case '2':
+                    System.out.println("CLIENT Case 2: My Fish Has Moved");
                     //sending message fishHasMoved
                     buffer = outMessage.getBytes();
                     packet = new DatagramPacket(buffer, buffer.length, realServerName, port);
                     client.send(packet);
                     break;
                 default:
-                    break;
+                System.out.println("CLIENT Default");
             }
 
             if (!inMessage.isEmpty()) {
@@ -147,7 +153,7 @@ public class Aquarium extends JPanel implements ActionListener{
                         if((Character.getNumericValue(inMessage.charAt(3))==this.ID)){
                             items.add(new Fish(50));
                         }else if(Character.getNumericValue(inMessage.charAt(3))!=this.ID){
-                            items.remove(toRemove);
+                            items.remove(itemsToRemove);
                         }
                         break;
                     default:
